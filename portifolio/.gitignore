@@ -7,7 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Node / Vite / React
+# Raiz do repo
 **/node_modules/
 dist/
 build/
@@ -16,6 +16,7 @@ build/
 .env
 .env.*
 .DS_Store
+
 
 
 # Editor directories and files
