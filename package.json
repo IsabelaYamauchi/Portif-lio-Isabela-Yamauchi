@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "@types/node": "^24.10.0",
+    "stylelint-config-tailwindcss": "^1.0.0",
     "tailwindcss": "^4.1.17"
   }
 }
