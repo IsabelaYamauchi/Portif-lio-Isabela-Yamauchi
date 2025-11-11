@@ -6,7 +6,7 @@ import SobreMim from "./routes/SobreMim";
 import Projetos from "./routes/Projetos";
 import Experiencias from "./routes/Experiencias";
 import Contato from "./routes/Contato";
-import NotFound from "./routes/NotFound";
+import NotFound from "./routes/NotFound"
 
 const queryClient = new QueryClient();
 
