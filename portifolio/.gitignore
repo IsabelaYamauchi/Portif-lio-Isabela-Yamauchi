@@ -7,10 +7,16 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# Node / Vite / React
+**/node_modules/
+dist/
+build/
+.vite/
+*.log
+.env
+.env.*
+.DS_Store
+
 
 # Editor directories and files
 .vscode/*
