@@ -1,106 +1,141 @@
-import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/Botao";
-import monogramaBranco from "@/assets/logo-branco.png";
+import { useEffect, useState } from "react";
+import { Menu as MenuIcon, X } from "lucide-react";
+import { Button } from "../Botao";
+import { useLocation } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { NavLink } from "react-router-dom";
 
-const Navigation = () => {
+type NavItem = { label: string; href: string };
+
+const navLinks: NavItem[] = [
+  { label: "Início",         href: "/" },
+  { label: "Sobre Mim",      href: "/sobre-mim" },
+  { label: "Projetos",       href: "/projetos" },
+  { label: "Experiências",   href: "/experiencias" },
+  { label: "Contato",        href: "/contato" },
+];
+
+export default function Menu() {
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
 
+  // fecha o menu 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
+    setMobileOpen(false);
+  }, [location.pathname]);
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+  //blur e sombra ao rolar
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const navLinks = [
-    { label: "Início", href: "/" },
-    { label: "Sobre Mim", href: "/sobre" },
-    { label: "Projetos", href: "/projetos" },
-    { label: "Experiências", href: "/experiencias" },
-    { label: "Contato", href: "/contato" },
-  ];
+  const baseLink =
+    "px-4 py-2 rounded-md text-sm md:text-[15px] font-light transition-colors ";
+  const idleDesktop = "text-foreground/80 hover:text-primary";
+  const activeDesktop = "text-primary font-normal";
+  const pending = "opacity-70";
 
-  const isActive = (href: string) => location.pathname === href;
+  const baseMobile =
+    "w-full text-left px-4 py-3 rounded-md text-base font-medium transition-colors";
+  const idleMobile = "text-foreground/90 hover:text-primary";
+  const activeMobile = "text-primary";
 
   return (
-    <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-background/95 backdrop-blur-sm shadow-lg" : "bg-transparent"
-      }`}
-    >
-      <div className="container mx-auto px-6">
-        <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <Link 
-            to="/" 
-            className="flex items-center"
+    <>
+      {/* Barra (desktop) */}
+      <nav
+        className={cn(
+          "hidden md:flex items-center gap-2",
+        )}
+        role="navigation"
+        aria-label="Navegação principal"
+      >
+        {navLinks.map((item) => (
+          <NavLink
+            key={item.href}
+            to={item.href}
+            className={({ isActive, isPending }) =>
+              cn(
+                baseLink,
+                isPending ? pending : isActive ? activeDesktop : idleDesktop
+              )
+            }
+            end
           >
-            <img 
-              src={monogramaBranco} 
-              alt="IY" 
-              className="h-12 w-auto"
-            />
-          </Link>
+            {item.label}
+          </NavLink>
+        ))}
+      </nav>
 
-          {/* Desktop */}
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                to={link.href}
-                className={`text-foreground hover:text-primary transition-colors font-light ${
-                  isActive(link.href) ? "text-primary font-normal" : ""
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </div>
+      {/* Botão mobile */}
+      <Button
+        variant="ghost"
+        size="icon"
+        className="md:hidden"
+        onClick={() => setMobileOpen(true)}
+        aria-label="Abrir menu"
+      >
+        <MenuIcon className="h-6 w-6" />
+      </Button>
 
-          {/* Mobile Menu Botao*/}
+      {/* Overlay mobile */}
+      <div
+        className={cn(
+          "fixed inset-0 z-40 bg-black/40 transition-opacity md:hidden",
+          mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none",
+        )}
+        onClick={() => setMobileOpen(false)}
+        aria-hidden="true"
+      />
+
+      {/* D mobile */}
+      <aside
+        className={cn(
+          "fixed top-0 right-0 z-50 h-full w-80 bg-background shadow-xl md:hidden",
+          "transform transition-transform",
+          mobileOpen ? "translate-x-0" : "translate-x-full",
+        )}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu de navegação móvel"
+      >
+        <div className="flex items-center justify-between px-4 py-4 border-b border-border">
+          <h2 className="text-lg font-semibold">Menu</h2>
           <Button
             variant="ghost"
             size="icon"
-            className="md:hidden"
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            aria-label="Toggle menu"
+            onClick={() => setMobileOpen(false)}
+            aria-label="Fechar menu"
           >
-            {isMobileMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
+            <X className="h-6 w-6" />
           </Button>
         </div>
 
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-          <div className="md:hidden py-4 border-t border-border">
-            <div className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  to={link.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={`text-foreground hover:text-primary transition-colors font-light py-2 ${
-                    isActive(link.href) ? "text-primary font-normal" : ""
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-      </div>
-    </nav>
-  );
-};
+        <div className="px-4 py-4 space-y-2">
+          {navLinks.map((item) => (
+            <NavLink
+              key={item.href}
+              to={item.href}
+              className={({ isActive, isPending }) =>
+                cn(
+                  baseMobile,
+                  isPending ? pending : isActive ? activeMobile : idleMobile
+                )
+              }
+              end
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </div>
+      </aside>
 
-export default Navigation;
+      {/* Fita transparente que o Header usa para blur*/}
+      <span className={cn(isScrolled && "pointer-events-none")} />
+    </>
+  );
+}

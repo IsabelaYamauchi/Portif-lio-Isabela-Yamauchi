@@ -7,15 +7,17 @@ import Projetos from "./routes/Projetos";
 import Experiencias from "./routes/Experiencias";
 import Contato from "./routes/Contato";
 import NotFound from "./routes/NotFound"
+import Header from "./components/Header";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+      <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/sobre" element={<SobreMim />} />
+          <Route path="/sobre-mim" element={<SobreMim />} />
           <Route path="/projetos" element={<Projetos/>} />
           <Route path="/experiencias" element={<Experiencias />} />
           <Route path="/contato" element={<Contato />} />
